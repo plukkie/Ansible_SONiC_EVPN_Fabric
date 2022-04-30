@@ -1,0 +1,9 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+{#######################################
+
+Purpose:
+Custom configuration for SONiC devices
+#########################################}
+{%for lacp_pc in lacp_pcs%}
+interface PortChannel {{lacp_pc}} mode active fallback
+{%endfor%}

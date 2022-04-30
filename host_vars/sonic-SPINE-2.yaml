@@ -1,0 +1,73 @@
+lacp_pcs: []
+mclag_member_pcs: []
+sonic_bgp:
+  - bestpath:
+      as_path:
+        multipath_relax: true
+    bgp_as: '{{ bgp_asn }}'
+    router_id: '{{ bgp_router_id }}'
+sonic_bgp_neighbors:
+  - bgp_as: '{{bgp_asn}}'
+    neighbors:
+      - neighbor: Eth1/1
+        peer_group: spine-leaf
+      - neighbor: Eth1/2
+        peer_group: spine-leaf
+      - neighbor: Eth1/3
+        peer_group: spine-leaf
+      - neighbor: Eth1/4
+        peer_group: spine-leaf
+    peer_group:
+      - '{{sonic_bgp_spineleaf_peergroup}}'
+sonic_bgp_neighbors_af:
+  - bgp_as: '{{bgp_asn}}'
+    neighbors:
+      - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
+        neighbor: Eth1/1
+      - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
+        neighbor: Eth1/2
+      - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
+        neighbor: Eth1/3
+      - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
+        neighbor: Eth1/4
+sonic_config:
+  lines: []
+sonic_interfaces:
+  - description: '"Interlink to sonic-LEAF-1 Eth1/9"'
+    enabled: true
+    name: Eth1/1
+  - description: '"Interlink to sonic-LEAF-2 Eth1/9"'
+    enabled: true
+    name: Eth1/2
+  - description: '"Interlink to sonic-LEAF-3 Eth1/9"'
+    enabled: true
+    name: Eth1/3
+  - description: '"Interlink to sonic-LEAF-4 Eth1/9"'
+    enabled: true
+    name: Eth1/4
+  - description: router-id
+    name: '{{ loopback_inf0 }}'
+sonic_l2_interfaces: []
+sonic_l3_interfaces:
+  - ipv6:
+      enabled: true
+    name: Eth1/1
+  - ipv6:
+      enabled: true
+    name: Eth1/2
+  - ipv6:
+      enabled: true
+    name: Eth1/3
+  - ipv6:
+      enabled: true
+    name: Eth1/4
+  - ipv4:
+      addresses:
+        - address: '{{ loopback0_ip }}'
+    name: '{{ loopback_inf0 }}'
+sonic_lag_interfaces: []
+sonic_system:
+  hostname: sonic-SPINE-2
+  interface_naming: standard
+sonic_vlans: []
+sonic_vrf_interfaces: []
