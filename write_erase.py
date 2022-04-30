@@ -52,7 +52,11 @@ def create_host_list (inventoryfile):
 
 
 def execute_commands (hosts, commands):
-    
+
+    """
+    This function logs into the hosts with ssh and executes the list with cli commands
+    """
+
     for ip in hosts:
         print('Accessing ' + ip + ':\n')
          
@@ -63,13 +67,13 @@ def execute_commands (hosts, commands):
         
         for cmd in commands:
             print('Send command: ' + cmd)
-            #remote.send(cmd + '\r')
+            remote.send(cmd + '\r')
             time.sleep(1)
-            buf = remote.recv(65000)
-            print (buf)
-            f = open('sshlogfile0001.txt', 'ab')
-            f.write(buf)
-            f.close()
+            #buf = remote.recv(65000)
+            #print (buf)
+            #f = open('sshlogfile0001.txt', 'ab')
+            #f.write(buf)
+            #f.close()
 
         print('\n- OK -- Host should reboot with default config, but retains Mgt IP ' + ip)
         print('----------------------------------------------------------------------------------\n')
