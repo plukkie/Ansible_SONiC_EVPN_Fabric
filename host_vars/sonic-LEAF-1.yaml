@@ -49,13 +49,13 @@ sonic_bgp_neighbors:
       - '{{sonic_bgp_spineleaf_peergroup}}'
   - bgp_as: '{{bgp_asn}}'
     neighbors:
-      - neighbor: 2.0.1.1
+      - neighbor: 2.0.1.0
         remote_as:
           peer_as: 65500
     vrf_name: Vrf1
   - bgp_as: '{{bgp_asn}}'
     neighbors:
-      - neighbor: 2.0.1.3
+      - neighbor: 2.0.2.0
         remote_as:
           peer_as: 65500
     vrf_name: Vrf1
@@ -72,7 +72,7 @@ sonic_bgp_neighbors_af:
           - activate: true
             afi: ipv4
             safi: unicast
-        neighbor: 2.0.1.1
+        neighbor: 2.0.1.0
     vrf_name: Vrf1
   - bgp_as: '{{bgp_asn}}'
     neighbors:
@@ -80,15 +80,15 @@ sonic_bgp_neighbors_af:
           - activate: true
             afi: ipv4
             safi: unicast
-        neighbor: 2.0.1.3
+        neighbor: 2.0.2.0
     vrf_name: Vrf1
 sonic_config:
   lines: []
 sonic_interfaces:
-  - description: '"Uplink"'
+  - description: '"Uplink ext-br1"'
     enabled: true
     name: Eth1/4
-  - description: '"Uplink"'
+  - description: '"Uplink ext-br2"'
     enabled: true
     name: Eth1/5
   - description: '"Node-01_eth0-NDC1-10G-1"'
@@ -114,14 +114,6 @@ sonic_interfaces:
     mtu: 9216
     name: PortChannel10
 sonic_l2_interfaces:
-  - name: Eth1/4
-    trunk:
-      allowed_vlans:
-        - vlan: 200
-  - name: Eth1/5
-    trunk:
-      allowed_vlans:
-        - vlan: 200
   - name: PortChannel 10
     trunk:
       allowed_vlans:
@@ -136,6 +128,14 @@ sonic_l2_interfaces:
         - vlan: 1012
         - vlan: 60
 sonic_l3_interfaces:
+  - ipv4:
+      addresses:
+        - address: 2.0.1.1/31
+    name: Eth1/4
+  - ipv4:
+      addresses:
+        - address: 2.0.2.1/31
+    name: Eth1/5
   - ipv6:
       enabled: true
     name: Eth1/8
@@ -150,10 +150,6 @@ sonic_l3_interfaces:
       addresses:
         - address: '{{ loopback1_ip }}'
     name: '{{ loopback_inf1 }}'
-  - ipv4:
-      addresses:
-        - address: 2.0.1.1/31
-    name: Vlan200
 sonic_lag_interfaces:
   - members:
       interfaces:
@@ -172,7 +168,6 @@ sonic_system:
   hostname: sonic-LEAF-1
   interface_naming: standard
 sonic_vlans:
-  - vlan_id: 200
   - vlan_id: 999
   - vlan_id: 1011
   - vlan_id: 1012
@@ -184,7 +179,8 @@ sonic_vrf_interfaces:
         - name: Vlan60
         - name: Vlan1011
         - name: Vlan1012
-        - name: Vlan200
+        - name: Eth1/4
+        - name: Eth1/5
     name: Vrf1
 sonic_vxlans:
   - evpn_nvo: nvo1

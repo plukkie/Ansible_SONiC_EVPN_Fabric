@@ -13,7 +13,7 @@
           - ip vrf mgmt
       register: result
     - pause:
-        seconds: 30
+        seconds: 35
 
     - name: Push Configurations For Custom CLIs. pre
       vars:
@@ -108,3 +108,10 @@
       sonic_config:
         src: fdc_clis.j2
       register: result
+
+    - name: Save config
+      vars:
+        ansible_connection: network_cli
+      sonic_config:
+        save: yes
+

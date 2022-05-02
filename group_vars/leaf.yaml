@@ -1,6 +1,6 @@
 anycast_mac_address: 00:00:00:00:01:02
 ipdhcp:
-  dhcp: []
+  dhcp: [ ]
   max_hop_count: 3
   source_lb_interface: 2
   vrf_name: Vrf1
