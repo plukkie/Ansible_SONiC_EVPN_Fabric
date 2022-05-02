@@ -93,9 +93,11 @@ interface Vlan {{vlan}}
 		ip dhcp-relay {{dhcp}} {%if ipdhcp.vrf_name is defined and ipdhcp.vrf_name%}vrf-name {{ipdhcp.vrf_name}} {%endif%}
 	{%endif%}
 {%endfor%}
-ip dhcp-relay max-hop-count {{ipdhcp.max_hop_count}}
-ip dhcp-relay source-interface Loopback{{ipdhcp.source_lb_interface}}
-ip dhcp-relay link-select
+{%if ipdhcp.dhcp is defined and ipdhcp.dhcp%}
+	ip dhcp-relay max-hop-count {{ipdhcp.max_hop_count}}
+	ip dhcp-relay source-interface Loopback{{ipdhcp.source_lb_interface}}
+	ip dhcp-relay link-select
+{%endif%}
 {%endif%}
 
 {# currently vrrp is not used. To enabe make .vrrp1 to .vrrp#}
