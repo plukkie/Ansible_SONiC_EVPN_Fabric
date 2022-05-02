@@ -86,9 +86,28 @@ def execute_commands (hosts, commands):
             print('----------------------------------------------------------------------------------\n')
 
 
+def yes_or_no(question):
+    while "the answer is invalid":
+        reply = str(input(question+' (y/n): ')).lower().strip()
+        try:
+            if reply[0] == 'y':
+                return True
+            if reply[0] == 'n':
+                return False
+        except:
+            pass
 
+
+## ==================
 ## Start main program
 ## ==================
+
+print()
+result = yes_or_no ('Are you sure you want to delete startup-configs and reboot hosts from ansible iventory?')
+if (result == False):
+    print()
+    quit()
+
 iplist = create_host_list(inventoryfile) #Create list with ip addresses of all hosts
 execute_commands (iplist, commandlist)   #Login to hosts and execute commands
 
