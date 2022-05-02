@@ -59,26 +59,31 @@ def execute_commands (hosts, commands):
 
     for ip in hosts:
         print('Accessing ' + ip + ':\n')
-         
-        twrssh = paramiko.SSHClient()
-        twrssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        twrssh.connect(ip, port=22, username=UN, password=PW)
-        remote = twrssh.invoke_shell()
         
-        for cmd in commands:
-            print('Send command: ' + cmd)
-            remote.send(cmd + '\r')
-            time.sleep(1)
-            #buf = remote.recv(65000)
-            #print (buf)
-            #f = open('sshlogfile0001.txt', 'ab')
-            #f.write(buf)
-            #f.close()
+        try:
+            twrssh = paramiko.SSHClient()
+            twrssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            twrssh.connect(ip, port=22, username=UN, password=PW)
+            remote = twrssh.invoke_shell()
+        
+            for cmd in commands:
+                print('Send command: ' + cmd)
+                remote.send(cmd + '\r')
+                time.sleep(1)
+                #buf = remote.recv(65000)
+                #print (buf)
+                #f = open('sshlogfile0001.txt', 'ab')
+                #f.write(buf)
+                #f.close()
 
-        print('\n- OK -- Host should reboot with default config, but retains Mgt IP ' + ip)
-        print('----------------------------------------------------------------------------------\n')
+            print('\n- OK -- Host should reboot with default config, but retains Mgt IP ' + ip)
+            print('----------------------------------------------------------------------------------\n')
 
-        twrssh.close()
+            twrssh.close()
+
+        except:
+            print('Error accessing host ' + ip + ' !')
+            print('----------------------------------------------------------------------------------\n')
 
 
 
@@ -87,4 +92,5 @@ def execute_commands (hosts, commands):
 iplist = create_host_list(inventoryfile) #Create list with ip addresses of all hosts
 execute_commands (iplist, commandlist)   #Login to hosts and execute commands
 
-print('All Done.')
+print('All Done.\n')
+
