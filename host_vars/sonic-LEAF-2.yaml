@@ -179,6 +179,8 @@ sonic_vrf_interfaces:
         - name: Vlan60
         - name: Vlan1011
         - name: Vlan1012
+        - name: Eth1/4
+        - name: Eth1/5
     name: Vrf1
 sonic_vxlans:
   - evpn_nvo: nvo1
