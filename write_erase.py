@@ -135,5 +135,5 @@ if (result == False):
 
 execute_commands (iplist, commandlist)   #Login to hosts and execute commands
 
-print('All Done.\n')
+print('All Done.\nPlease allow the routers to reboot and wait 3 mins before configure them to avoid unreachability errors.\n')
  
