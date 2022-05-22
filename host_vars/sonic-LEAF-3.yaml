@@ -41,9 +41,9 @@ sonic_bgp_af:
 sonic_bgp_neighbors:
   - bgp_as: '{{bgp_asn}}'
     neighbors:
-      - neighbor: Eth1/9
+      - neighbor: Eth1/1
         peer_group: spine-leaf
-      - neighbor: Eth1/8
+      - neighbor: Eth1/5
         peer_group: spine-leaf
     peer_group:
       - '{{sonic_bgp_spineleaf_peergroup}}'
@@ -51,27 +51,27 @@ sonic_bgp_neighbors_af:
   - bgp_as: '{{bgp_asn}}'
     neighbors:
       - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
-        neighbor: Eth1/9
+        neighbor: Eth1/1
       - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
-        neighbor: Eth1/8
+        neighbor: Eth1/5
 sonic_config:
   lines: []
 sonic_interfaces:
   - description: '"Node-02_eth0-NDC1-10G-1"'
     enabled: true
-    name: Eth1/1
+    name: Eth1/4
   - description: '"MCLAG to sonic-LEAF-4 Eth1/6"'
     enabled: true
-    name: Eth1/6
+    name: Eth1/3
   - description: '"MCLAG to sonic-LEAF-4 Eth1/7"'
     enabled: true
     name: Eth1/7
   - description: '"Uplink to sonic-SPINE-2 Eth1/3"'
     enabled: true
-    name: Eth1/9
+    name: Eth1/5
   - description: '"Uplink to sonic-SPINE-1 Eth1/3"'
     enabled: true
-    name: Eth1/8
+    name: Eth1/1
   - description: router-id
     name: '{{ loopback_inf0 }}'
   - description: vtep
@@ -96,10 +96,10 @@ sonic_l2_interfaces:
 sonic_l3_interfaces:
   - ipv6:
       enabled: true
-    name: Eth1/8
+    name: Eth1/1
   - ipv6:
       enabled: true
-    name: Eth1/9
+    name: Eth1/5
   - ipv4:
       addresses:
         - address: '{{ loopback0_ip }}'
@@ -111,12 +111,12 @@ sonic_l3_interfaces:
 sonic_lag_interfaces:
   - members:
       interfaces:
-        - member: Eth1/1
+        - member: Eth1/4
     mode: lacp
     name: PortChannel10
   - members:
       interfaces:
-        - member: Eth1/6
+        - member: Eth1/3
         - member: Eth1/7
     name: PortChannel100
 sonic_system:

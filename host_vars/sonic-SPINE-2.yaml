@@ -33,16 +33,16 @@ sonic_bgp_neighbors_af:
 sonic_config:
   lines: []
 sonic_interfaces:
-  - description: '"Interlink to sonic-LEAF-1 Eth1/9"'
+  - description: '"Interlink to sonic-LEAF-1 Eth1/5"'
     enabled: true
     name: Eth1/1
-  - description: '"Interlink to sonic-LEAF-2 Eth1/9"'
+  - description: '"Interlink to sonic-LEAF-2 Eth1/5"'
     enabled: true
     name: Eth1/2
-  - description: '"Interlink to sonic-LEAF-3 Eth1/9"'
+  - description: '"Interlink to sonic-LEAF-3 Eth1/5"'
     enabled: true
     name: Eth1/3
-  - description: '"Interlink to sonic-LEAF-4 Eth1/9"'
+  - description: '"Interlink to sonic-LEAF-4 Eth1/5"'
     enabled: true
     name: Eth1/4
   - description: router-id
