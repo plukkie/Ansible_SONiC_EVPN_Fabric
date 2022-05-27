@@ -2,6 +2,7 @@
 
 import paramiko
 import time
+import datetime
 import getpass
 import os
 import sys
@@ -11,7 +12,7 @@ import sys
 inventoryfile = 'hosts'
 hoststr = 'ansible_host='
 UN = 'admin'
-PW = 'admin123'
+PW = 'YourPaSsWoRd'
 commandlist = [ "sonic-cli", "write erase", "y", "reboot" ]
  
 #UN = input("Username : ")
@@ -136,4 +137,5 @@ if (result == False):
 execute_commands (iplist, commandlist)   #Login to hosts and execute commands
 
 print('All Done.\nPlease allow the routers to reboot and wait 3 mins before configure them to avoid unreachability errors.\n')
- 
+print('Current date/time: ' + datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+print()

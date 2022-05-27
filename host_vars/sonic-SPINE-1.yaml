@@ -6,6 +6,9 @@ sonic_bgp:
         multipath_relax: true
     bgp_as: '{{ bgp_asn }}'
     router_id: '{{ bgp_router_id }}'
+    timers:
+      holdtime: 9
+      keepalive_interval: 3
 sonic_bgp_neighbors:
   - bgp_as: '{{bgp_asn}}'
     neighbors:
@@ -45,7 +48,7 @@ sonic_interfaces:
   - description: '"Interlink to sonic-LEAF-4 Eth1/1"'
     enabled: true
     name: Eth1/4
-  - description: router-id
+  - description: 'router-id'
     name: '{{ loopback_inf0 }}'
 sonic_l2_interfaces: []
 sonic_l3_interfaces:
