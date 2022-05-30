@@ -135,3 +135,24 @@ tacacs-server host {{host.name}} vrf mgmt key {{host.key}} port {{host.port}} ti
 {%endfor%}{%endif%}
 {%endif%}
 {# end of tacacs configuration #}
+
+{# Add peer-ip for VTEP loadbalancing #}
+{%if host_data[inventory_hostname].mclag_peer_ip is defined and host_data[inventory_hostname].mclag_peer_ip %}
+		router bgp {{ bgp_asn }}
+		address-family l2vpn evpn
+		advertise-pip peer-ip {{ host_data[inventory_hostname].mclag_peer_ip }}
+{%endif%}
+
+{# Allow own AS in from MCLAG neighbor #}
+{%if sonic_bgp_spineleaf_peergroup.address_family.afis is defined and sonic_bgp_spineleaf_peergroup.address_family.afis %}
+	{% for afi in sonic_bgp_spineleaf_peergroup.address_family.afis %}
+		{%if afi.afi == 'ipv4' %}
+			router bgp {{ bgp_asn }}
+			peer-group {{ sonic_bgp_spineleaf_peergroup.name }}
+			address-family {{ afi.afi }} unicast
+			allowas-in 1
+		{%endif%}
+	{%endfor%}
+{%endif%}
+
+
