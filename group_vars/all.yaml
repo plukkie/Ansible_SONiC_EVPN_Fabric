@@ -104,12 +104,12 @@ vlan_info:
     neigh_suppress: true
     vni: 9990
     vrf: Vrf1
-  1011:
+  1010:
     anycast_gateway_ip: 172.16.1.254/24
     neigh_suppress: true
     vni: 10100
     vrf: Vrf1
-  1012:
+  1020:
     anycast_gateway_ip: 172.16.2.254/24
     neigh_suppress: true
     vni: 10200
