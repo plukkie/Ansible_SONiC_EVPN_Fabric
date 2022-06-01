@@ -180,8 +180,8 @@ sonic_vrf_interfaces:
       interfaces:
         - name: Vlan999
         - name: Vlan60
-        - name: Vlan1011
-        - name: Vlan1012
+        - name: Vlan1010
+        - name: Vlan1020
         - name: Eth1/2
         - name: Eth1/6
     name: Vrf1
