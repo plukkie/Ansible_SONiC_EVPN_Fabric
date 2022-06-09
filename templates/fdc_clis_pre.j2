@@ -5,7 +5,7 @@ Purpose:
 Custom configuration for SONiC devices
 #########################################}
 
-mac address-table aging-time 120
+#mac address-table aging-time 120
 
 {%for lacp_pc in lacp_pcs%}
 interface PortChannel {{lacp_pc}} mode active fallback
