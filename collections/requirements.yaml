@@ -1,6 +1,5 @@
 ---
 collections:
 - dellemc.enterprise_sonic
-- name: jinja2
-  version: 3.0.0
+- jinja2=3.0.0
  
