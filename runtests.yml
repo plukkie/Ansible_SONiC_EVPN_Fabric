@@ -1,5 +1,5 @@
 ---
-- hosts: sonic-LEAF-1
+- hosts: leaf
   connection: httpapi
   gather_facts: false
   collections:
