@@ -1,0 +1,47 @@
+
+- hosts: sonic-LEAF-1
+  connection: httpapi
+  gather_facts: false
+  collections:
+    - dellemc.enterprise_sonic
+ 
+
+
+  pre_tasks:
+    
+    - include_vars:
+        file: group_vars/vlans.yaml
+        name: myvars
+
+    - name: Construct tenant data in yaml files
+      template:
+        src: templates/format_tenantdata.j2
+        dest: rendered/{{ inventory_hostname }}-tenantdata.yaml
+    
+
+
+  tasks: 
+  
+    - include_vars:
+         files_matching: "{{ inventory_hostname }}-tenantdata.yaml"
+         dir: rendered
+         name: vlans
+
+
+  #- name: Show yaml var for debug purpose
+  #   debug:
+  #     msg: "{{ myvars }}"
+
+
+    - name: Create vlans 
+      sonic_vlans:
+        config: '{{vlans.sonic_vlans}}'
+      when: sonic_vlans is defined and sonic_vlans
+
+    - name: Create VRF interfaces
+      sonic_l3_interfaces:
+        config: '{{vlans.sonic_l3_interfaces}}'
+      when: sonic_vrf_interfaces is defined and sonic_vrf_interfaces
+
+ 
+

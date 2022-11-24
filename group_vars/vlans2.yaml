@@ -1,0 +1,22 @@
+vlandata:
+  501:
+    desc: vlan501
+    net: 10.10.1.0
+    agw: 254
+    mask: 24
+    interfaces: [ Portchannel 10, Portchannel 100 ] 
+    hosts: [ sonic-LEAF-1, sonic-LEAF-2 ]
+    vrf: Vrf1
+    int_vlan_options: [ neigh-suppress ]
+    vtep: vtep1
+
+  502:
+    desc: vlan502
+    net: 10.10.2.0
+    agw: 254
+    mask: 24
+    interfaces: [ Portchannel 10, Portchannel 100 ] 
+    hosts: [ sonic-LEAF-1, sonic-LEAF-2 ]
+    vrf: Vrf1
+    int_vlan_options: [ neigh-suppress ]
+    vtep: vtep1

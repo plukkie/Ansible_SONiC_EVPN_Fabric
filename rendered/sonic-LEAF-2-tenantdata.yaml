@@ -1,0 +1,107 @@
+
+   
+                                                
+               
+
+
+               
+                 
+                  
+
+ ip vrf forwarding Vrf1
+
+	                 
+                ip anycast-address 10.10.1.254/24
+
+	       
+               
+ description "fabric wide vlan501"
+
+                                       
+ neigh-suppress
+
+                                                      
+                                 interface Portchannel 10
+ switchport trunk allowed Vlan add 501
+                  interface Portchannel 100
+ switchport trunk allowed Vlan add 501
+                                 
+               interface vxlan vtep1
+ map vni 501501 vlan 501
+               
+                                                                    
+   
+                                                
+               
+
+
+               
+                 
+                  
+
+ ip vrf forwarding Vrf1
+
+	                 
+                ip anycast-address 10.10.2.254/24
+
+	       
+               
+ description "fabric wide vlan502"
+
+                                       
+ neigh-suppress
+
+                                                      
+                                 interface Portchannel 10
+ switchport trunk allowed Vlan add 502
+                  interface Portchannel 100
+ switchport trunk allowed Vlan add 502
+                                 
+               interface vxlan vtep1
+ map vni 502502 vlan 502
+               
+                                                                    
+   
+                                                
+               
+
+
+               
+                 
+                  
+
+ ip vrf forwarding Vrf1
+
+	                 
+                ip anycast-address 10.10.12.254/24
+
+	       
+               
+ description "pair12-vlan512"
+
+                                       
+ neigh-suppress
+
+                                                      
+                                 interface Portchannel 10
+ switchport trunk allowed Vlan add 512
+                  interface Portchannel 100
+ switchport trunk allowed Vlan add 512
+                                 
+               interface vxlan vtep1
+ map vni 512512 vlan 512
+               
+                          
+   
+                                                               
+   
+sonic_vlans:
+       - vlan_id: 501
+       - vlan_id: 502
+       - vlan_id: 512
+  
+sonic_vrf_interfaces:
+       501
+       502
+       512
+  

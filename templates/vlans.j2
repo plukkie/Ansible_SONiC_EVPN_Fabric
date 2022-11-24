@@ -1,0 +1,54 @@
+
+
+{% if myvars is defined %}
+  {% for vlan in myvars['vlandata'] %}
+
+    {% if myvars['vlandata'][vlan]['hosts'] is defined and myvars['vlandata'][vlan]['hosts'] %}
+      {% for host in myvars['vlandata'][vlan]['hosts'] %}
+        {% if host is match inventory_hostname %}
+
+interface Vlan {{ vlan }}
+
+          {% if myvars['vlandata'][vlan].vrf is defined and myvars['vlandata'][vlan].vrf %}
+
+ ip vrf forwarding {{ myvars['vlandata'][vlan].vrf }}
+
+	  {% endif %}
+          
+          {% if myvars['vlandata'][vlan].net is defined and myvars['vlandata'][vlan].net %}
+ ip anycast-address {{ myvars['vlandata'][vlan].net.split(".")[0] }}.{{ myvars['vlandata'][vlan].net.split(".")[1] }}.{{ myvars['vlandata'][vlan].net.split(".")[2] }}.{{ myvars['vlandata'][vlan].agw }}/{{ myvars['vlandata'][vlan].mask }}
+
+	  {% endif %}
+
+          {% if myvars['vlandata'][vlan].desc is defined and myvars['vlandata'][vlan].desc %}
+
+ description "{{ myvars['vlandata'][vlan].desc }}"
+
+            {% if myvars['vlandata'][vlan]['int_vlan_options'] is defined and myvars['vlandata'][vlan]['int_vlan_options'] %}
+              {% for option in myvars['vlandata'][vlan]['int_vlan_options'] %}
+
+ {{ option }}
+
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+
+          {% if myvars['vlandata'][vlan]['interfaces'] is defined and myvars['vlandata'][vlan]['interfaces'] %}
+            {% for interface in myvars['vlandata'][vlan]['interfaces'] %}
+interface {{ interface }}
+ switchport trunk allowed Vlan add {{ vlan }}
+            {% endfor %}
+          {% endif %}
+
+          {% if myvars['vtep'] is defined and myvars.vtep %}
+interface vxlan {{ myvars.vtep }}
+ map vni {{ vlan }}{{ vlan }} vlan {{ vlan }}
+          {% endif %}
+
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+  {% endfor %}
+{% endif %}
+

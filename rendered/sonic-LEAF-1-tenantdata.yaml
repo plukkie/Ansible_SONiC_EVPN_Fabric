@@ -1,0 +1,151 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sonic_vlans:
+  - vlan_id: 501
+  - vlan_id: 502
+  - vlan_id: 503
+  - vlan_id: 512
+
+
+sonic_vrf_interfaces:
+  - members:
+      interfaces:
+        - name: Vlan501
+    name: Vrf1
+    test: 10.10.1.254/24
+  - members:
+      interfaces:
+        - name: Vlan502
+    name: Vrf1
+    test: 10.10.2.254/24
+  - members:
+      interfaces:
+        - name: Vlan503
+    name: Vrf1
+    test: 10.10.3.254/24
+  - members:
+      interfaces:
+        - name: Vlan512
+    name: Vrf1
+    test: 10.10.12.254/24
+
+sonic_l3_interfaces:
+  - ipv4:
+       anycast_addresses:
+          - 10.10.1.254/24
+    name: Vlan501
+  - ipv4:
+       anycast_addresses:
+          - 10.10.2.254/24
+    name: Vlan502
+  - ipv4:
+       anycast_addresses:
+          - 10.10.3.254/24
+    name: Vlan503
+  - ipv4:
+       anycast_addresses:
+          - 10.10.12.254/24
+    name: Vlan512
+
+
+
+
+
+
+
+
+
+
+

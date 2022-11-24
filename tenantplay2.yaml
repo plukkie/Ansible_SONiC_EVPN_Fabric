@@ -1,0 +1,61 @@
+
+- hosts: leaf
+  connection: httpapi
+  gather_facts: false
+  collections:
+    - dellemc.enterprise_sonic
+  
+
+  tasks: 
+    - include_vars:
+        file: group_vars/vlans2.yaml
+        name: myvars
+
+        #- name: Create Vlans
+        #sonic_vlans:
+        #config: "{{ myvars['myhosts'][inventory_hostname]['sonic_vlans'] }}"
+        #when: myvars['myhosts'][inventory_hostname]['sonic_vlans'] is defined and
+        #    myvars['myhosts'][inventory_hostname]['sonic_vlans']
+
+        #- name: Push vlans configuration with custom jinja2 scripting
+        #vars:
+        #ansible_connection: network_cli
+        #sonic_config:
+        #src: templates/vlans.j2
+        #register: result
+    
+    - name: List var myvars
+      ansible.builtin.debug:
+        msg: "{{ myvars.vlandata.keys() | type_debug }}"
+    
+    - name: List keys in myvars (List with vlans)
+      ansible.builtin.debug:
+        msg: "{{ myvars['vlandata'].keys() }}"
+    
+    - name: Transform dict to List with items
+      ansible.builtin.debug:
+        msg: "{{ myvars['vlandata'] | dict2items }}"
+      register: vlanarray
+
+    - name: List tranformed array
+      debug:
+          var: vlanarray
+
+    - name: Create sonic_vlans list
+{% for vlan in myvars['vlandata'].keys() %}
+      var:
+        string: - vlan_id: {{ vlan }}
+{% endfor %}
+      debug:
+        msg: "{{ string }}"
+
+    - name: Configure vlans
+      sonic_vlans:
+              config:  myvars['vlandata'].keys()
+
+    - name: Save config
+      vars:
+        ansible_connection: network_cli
+      sonic_config:
+        save: no
+
