@@ -1,5 +1,6 @@
 {% set vlanarray = [] %}
 {% set vrfarray = [] %}
+{% set l2interfacearray = [] %}
 
 {% if myvars is defined %}
 {% for vlan in myvars['vlandata'] %}
@@ -36,9 +37,8 @@
 {% endif %}
 
 {% if myvars['vlandata'][vlan]['interfaces'] is defined and myvars['vlandata'][vlan]['interfaces'] %}
-
+{{ l2interfacearray.append( {'vlan': vlan, 'ports': myvars['vlandata'][vlan]['interfaces']} ) }}
 {% for interface in myvars['vlandata'][vlan]['interfaces'] %}
-
 {% endfor %}
 {% endif %}
 
@@ -58,6 +58,16 @@ sonic_vlans:
   - vlan_id: {{ vlanitem }}
 {% endfor %}
 
+sonic_l2_interfaces:
+{% for vlanl2obj in l2interfacearray %}
+{% set myvlan = vlanl2obj['vlan'] %}
+{% for vlanl2int in vlanl2obj['ports'] %}
+  - name: {{ vlanl2int }}
+    trunk:
+      allowed_vlans:
+        - vlan: {{ myvlan }}
+{% endfor %}
+{% endfor %}
 
 sonic_vrf_interfaces:
 {% for vlanvrfitem in vrfarray %}
@@ -68,7 +78,6 @@ sonic_vrf_interfaces:
       interfaces:
         - name: {{ myvlan }}
     name: {{ myvrf }}
-    test: {{ my4gw }}
 {% endfor %}
 
 sonic_l3_interfaces:
@@ -81,13 +90,15 @@ sonic_l3_interfaces:
     name: {{ myvlan }}
 {% endfor %}
 
+sonic_vxlans:
+{% if myvars['vtep'] is defined and myvars.vtep %}
+  - name: {{ myvars['vtep'] }}
+    vlan_map:
+{% for vlanitem in vlanarray %}
+       - vlan: {{ vlanitem }}
+         vni: {{ vlanitem }}{{ vlanitem }}
+{% endfor %}
+{% endif %}
 
-
-
-
-
-
-
-
-
-
+sonic_config:
+  lines: []
