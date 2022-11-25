@@ -1,0 +1,176 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sonic_vlans:
+  - vlan_id: 501
+  - vlan_id: 502
+  - vlan_id: 503
+  - vlan_id: 534
+
+sonic_l2_interfaces:
+  - name: Portchannel 10
+    trunk:
+      allowed_vlans:
+        - vlan: 501
+  - name: Portchannel 100
+    trunk:
+      allowed_vlans:
+        - vlan: 501
+  - name: Portchannel 10
+    trunk:
+      allowed_vlans:
+        - vlan: 502
+  - name: Portchannel 100
+    trunk:
+      allowed_vlans:
+        - vlan: 502
+  - name: Portchannel 10
+    trunk:
+      allowed_vlans:
+        - vlan: 503
+  - name: Portchannel 100
+    trunk:
+      allowed_vlans:
+        - vlan: 503
+  - name: Portchannel 10
+    trunk:
+      allowed_vlans:
+        - vlan: 534
+  - name: Portchannel 100
+    trunk:
+      allowed_vlans:
+        - vlan: 534
+
+sonic_vrf_interfaces:
+  - members:
+      interfaces:
+        - name: Vlan501
+    name: Vrf1
+  - members:
+      interfaces:
+        - name: Vlan502
+    name: Vrf1
+  - members:
+      interfaces:
+        - name: Vlan503
+    name: Vrf1
+  - members:
+      interfaces:
+        - name: Vlan534
+    name: Vrf1
+
+sonic_l3_interfaces:
+  - ipv4:
+       anycast_addresses:
+          - 10.10.1.254/24
+    name: Vlan501
+  - ipv4:
+       anycast_addresses:
+          - 10.10.2.254/24
+    name: Vlan502
+  - ipv4:
+       anycast_addresses:
+          - 10.10.3.254/24
+    name: Vlan503
+  - ipv4:
+       anycast_addresses:
+          - 10.10.34.254/24
+    name: Vlan534
+
+sonic_vxlans:
+  - name: vtep3
+    vlan_map:
+       - vlan: 501
+         vni: 501501
+       - vlan: 502
+         vni: 502502
+       - vlan: 503
+         vni: 503503
+       - vlan: 534
+         vni: 534534
+
+sonic_config:
+  lines: []
