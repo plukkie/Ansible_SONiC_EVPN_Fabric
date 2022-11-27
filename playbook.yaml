@@ -4,7 +4,7 @@
   collections:
     - dellemc.enterprise_sonic
 
-  tasks: 
+  pre_tasks:
     - name: VRF Mgmt
       vars:
         ansible_connection: network_cli
@@ -13,7 +13,10 @@
           - ip vrf mgmt
       register: result
     - pause:
-        seconds: 35
+        seconds: 40
+
+
+  tasks: 
 
     - name: Push Configurations For Custom CLIs. pre
       vars:
