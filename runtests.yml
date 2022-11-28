@@ -7,7 +7,6 @@
 
 
   vars:
-    pings: 2
     leafcount: 4
 
   tasks: 
