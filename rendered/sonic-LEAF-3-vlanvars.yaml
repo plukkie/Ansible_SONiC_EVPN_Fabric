@@ -174,3 +174,9 @@ sonic_vxlans:
 
 sonic_config:
   lines: []
+
+all_vnis:
+  - 501501
+  - 502502
+  - 503503
+  - 534534

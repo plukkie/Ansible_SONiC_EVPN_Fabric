@@ -102,3 +102,8 @@ sonic_vxlans:
 
 sonic_config:
   lines: []
+
+all_vnis:
+{% for vlanitem in vlanarray %}
+  - {{ vlanitem }}{{ vlanitem }}
+{% endfor %}
