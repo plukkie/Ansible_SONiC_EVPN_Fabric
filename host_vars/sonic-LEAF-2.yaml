@@ -121,14 +121,10 @@ sonic_l2_interfaces:
     trunk:
       allowed_vlans:
         - vlan: 999
-        - vlan: 1010
-        - vlan: 1020
   - name: PortChannel100
     trunk:
       allowed_vlans:
         - vlan: 999
-        - vlan: 1010
-        - vlan: 1020
         - vlan: 60
 sonic_l3_interfaces:
   - ipv6:
@@ -172,16 +168,12 @@ sonic_system:
   interface_naming: standard
 sonic_vlans:
   - vlan_id: 999
-  - vlan_id: 1010
-  - vlan_id: 1020
   - vlan_id: 60
 sonic_vrf_interfaces:
   - members:
       interfaces:
         - name: Vlan999
         - name: Vlan60
-        - name: Vlan1010
-        - name: Vlan1020
         - name: Eth1/2
         - name: Eth1/6
     name: Vrf1
@@ -192,10 +184,6 @@ sonic_vxlans:
     vlan_map:
       - vlan: 999
         vni: 9990
-      - vlan: 1010
-        vni: 10100
-      - vlan: 1020
-        vni: 10200
       - vlan: 60
         vni: 600
     vrf_map:
@@ -203,7 +191,5 @@ sonic_vxlans:
         vrf: Vrf1
 vlans:
   - 999
-  - 1010
-  - 1020
 vrfs:
   - Vrf1
