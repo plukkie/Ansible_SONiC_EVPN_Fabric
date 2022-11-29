@@ -1,13 +1,13 @@
 ---
+
+- import_playbook: create_rendered_files.yaml
+
 - hosts: leaf
   connection: httpapi
   gather_facts: false
   collections:
     - dellemc.enterprise_sonic
 
-
-  vars:
-    leafcount: 4
 
   tasks: 
 
