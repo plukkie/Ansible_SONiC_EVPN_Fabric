@@ -1,0 +1,235 @@
+{% set leafobj = jsonobj['fabric']['leaf'] -%}
+{% set spineobj = jsonobj['fabric']['spine'] -%}
+{% set commonobj = jsonobj['fabric']['common'] -%}
+{% set borderobj = jsonobj['gns3']['nodesdata']['templates']['border'] -%}
+{% set leafprefix = leafobj['nameprefix'] -%}
+{% set spineprefix = spineobj['nameprefix'] -%}
+{% set pc_ints = leafobj['lacp_pcs'] -%}
+{% set leafintobj = jsonobj['gns3']['nodesdata']['templates']['leaf']['interlinks'] -%}
+{% set spinecount = jsonobj['gns3']['nodesdata']['templates']['spine']['count']|int -%}
+{% set bordersubnet = commonobj['bordersubnet'].split(".") -%}
+{% set bordercount = jsonobj['gns3']['nodesdata']['templates']['border']['count']|int -%}
+{% set borderas = commonobj['borderas']|int -%}
+{% set bordernet = bordersubnet[0]+'.'+bordersubnet[1]+'.'+bordersubnet[2] -%}
+{% set hostcount = jsonobj['gns3']['nodesdata']['templates']['leaf']['hosts']['count']|int -%}
+{% set leafhostint = jsonobj['gns3']['nodesdata']['templates']['leaf']['hosts']['leaflinks'] -%}
+{% set leafborderint = jsonobj['gns3']['nodesdata']['templates']['leaf']['borderlinks'] -%}
+{% set interface_array = [] -%}
+{% set vltiportchannel = leafobj['vlti-Portchannel'] -%}
+
+
+{% set slot = '1' %}
+
+
+{% if leafprefix in inventory_hostname -%}
+{% set switchnr = inventory_hostname[leafprefix|length:]|int -%}
+{% set role = 'leaf' -%}
+{% endif -%}
+
+{% if spineprefix in inventory_hostname -%}
+{% set switchnr = inventory_hostname[spineprefix|length:]|int -%}
+{% set role = 'spine' -%}
+{% endif -%}
+
+{% set vlti = jsonobj['gns3']['nodesdata']['templates'][role]['vlti'] -%}
+{% if vlti['count'] > 0 -%}
+{% set adapter = vlti['1st_adapter_number'] -%}
+{% set adapterstep = vlti['adapterstep']|int -%}
+{% set port = vlti['port'] -%}
+{% set portstep = vlti['portstep'] -%}
+{% set interface = {'a':adapter} -%}
+{% for x in range(vlti['count']) -%}
+{{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'VLTi link', 'open': true}) }}
+{% set adapter = adapter+adapterstep -%}
+{{ interface.update({'a':adapter}) -}}
+{% endfor -%}
+{% endif -%}
+
+
+{% if role == 'leaf' -%}
+{% set adapter = leafhostint['1st_adapter_number'] -%}
+{% set adapterstep = leafhostint['adapterstep']|int -%}
+{% set port = leafhostint['port'] -%}
+{% set portstep = leafhostint['portstep'] -%}
+{% set interface = {'a':adapter} -%}
+{% for x in range(hostcount) -%}
+{{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Hostlink', 'open': true}) }}
+{% set adapter = adapter+adapterstep -%}
+{{ interface.update({'a':adapter}) -}}
+{% endfor -%}
+
+{{ interface_array.append({'int':'Portchannel'+vltiportchannel|string, 'mtu': 9216, 'desc': 'VLTi Portchannel', 'open': true}) }}
+
+lacp_pcs:
+  {% for x in range(hostcount) -%}
+  - {{pc_ints[0]+x}}
+  {% endfor %}
+
+mclag_member_pcs:
+  {% for x in range(hostcount) -%}
+  - lag: Portchannel{{pc_ints[0]+x}}
+  {{ interface_array.append({'int':'Portchannel'+(pc_ints[0]+x)|string, 'mtu': 9216, 'desc': 'Lag to Host', 'open': true}) }}
+  {% endfor %}
+
+sonic_bgp:
+  - bestpath:
+      as_path:
+        multipath_relax: true
+    bgp_as: '{{ '{{ bgp_asn }}' }}'
+    router_id: '{{ '{{ bgp_router_id }}' }}'
+  - bgp_as: '{{ '{{bgp_asn}}' }}'
+    vrf_name: {{ commonobj['L3VRF'] }}
+  - bgp_as: '{{ '{{ bgp_asn }}' }}'
+    timers:
+      holdtime: 9
+      keepalive_interval: 3
+
+sonic_bgp_af:
+  - address_family:
+      afis:
+        - afi: ipv4
+          max_path:
+            ebgp: 2
+          redistribute:
+            - protocol: connected
+          safi: unicast
+        - advertise_all_vni: true
+          afi: l2vpn
+          safi: evpn
+    bgp_as: '{{ '{{bgp_asn}}' }}'
+  - address_family:
+      afis:
+        - advertise_prefix:
+            - afi: ipv4
+              safi: unicast
+          afi: l2vpn
+          safi: evpn
+        - afi: ipv4
+          redistribute:
+            - protocol: connected
+          safi: unicast
+    bgp_as: '{{ '{{ bgp_asn }}' }}'
+    vrf_name: {{ commonobj['L3VRF'] }}
+
+sonic_bgp_neighbors:
+  - bgp_as: '{{ '{{bgp_asn}}' }}'
+    neighbors:
+      {% set adapter = leafintobj['1st_adapter_number'] -%}
+      {% set adapterstep = leafintobj['adapterstep']|int -%}
+      {% set port = leafintobj['port'] -%}
+      {% set portstep = leafintobj['portstep'] -%}
+      {% set interface = {'a':adapter} -%}
+      {% for x in range(spinecount) -%}
+      - neighbor: Eth{{slot}}/{{interface['a']}}
+        peer_group: spine-leaf
+      {{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Interlink', 'open': true}) }}
+      {% set adapter = adapter+adapterstep -%}
+      {{ interface.update({'a':adapter}) -}}
+      {% endfor -%}
+    peer_group:
+      - '{{ '{{sonic_bgp_spineleaf_peergroup}}' }}'
+  {% if switchnr <= 2 -%}
+
+  {% set adapter = leafborderint['1st_adapter_number'] -%}
+  {% set adapterstep = leafborderint['adapterstep']|int -%}
+  {% set port = leafborderint['port'] -%}
+  {% set portstep = leafborderint['portstep'] -%}
+  {% set interface = {'a':adapter} -%}
+  {% for x in range(bordercount) -%}
+  {{ interface_array.append({'int':'Eth'+slot+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Borderlink', 'open': true}) }}
+  {% set adapter = adapter+adapterstep -%}
+  {{ interface.update({'a':adapter}) -}}
+  {% endfor -%}
+
+  {% if switchnr == 1 -%}
+  {% set myintip = {'ip':bordersubnet[3]} -%}
+  {% else %}
+  {% set myintip = {'ip':bordersubnet[3]|int+2*bordercount} -%}
+  {% endif -%}
+  {% for x in range(bordercount) -%}
+  - bgp_as: '{{ '{{bgp_asn}}' }}'
+    neighbors:
+      - neighbor: {{bordernet}}.{{myintip['ip']}}
+        remote_as:
+          peer_as: borderas
+    vrf_name: {{ commonobj['L3VRF'] }}
+  {{ myintip.update({'ip':myintip['ip']|int+2}) -}}
+  {% endfor -%}
+  {% endif %}
+
+
+sonic_bgp_neighbors_af:
+  - bgp_as: '{{ '{{bgp_asn}}' }}'
+    neighbors:
+      {% set adapter = leafintobj['1st_adapter_number'] -%}
+      {% set adapterstep = leafintobj['adapterstep']|int -%}
+      {% set port = leafintobj['port'] -%}
+      {% set portstep = leafintobj['portstep'] -%}
+      {% set interface = {'a':adapter} -%}
+      {% for x in range(spinecount) -%}
+      - address_family: '{{ '{{sonic_bgp_fabriclink_neighbors_aflist}}' }}'
+        neighbor: Eth{{slot}}/{{interface['a']}}
+      {% set adapter = adapter+adapterstep -%}
+      {{ interface.update({'a':adapter}) -}}
+      {% endfor -%}
+  {% if switchnr <= 2 -%}
+  {% if switchnr == 1 -%}
+  {% set myintip = {'ip':bordersubnet[3]} -%}
+  {% else %}
+  {% set myintip = {'ip':bordersubnet[3]|int+2*bordercount} -%}
+  {% endif -%}
+  {% for x in range(bordercount) -%}
+  - bgp_as: '{{ '{{bgp_asn}}' }}'
+    neighbors:
+      - address_family:
+          - activate: true
+            afi: ipv4
+            safi: unicast
+        neighbor: {{bordernet}}.{{myintip['ip']}}
+    vrf_name: {{ commonobj['L3VRF'] }}
+  {{ myintip.update({'ip':myintip['ip']|int+2}) -}}
+  {% endfor -%}
+  {% endif %}
+
+
+
+{% if switchnr <= 2 -%}
+is_border_leaf: true
+{% else -%}
+is_border_leaf: false
+{% endif -%}
+{% endif %}
+
+sonic_config:
+  lines: []
+
+sonic_interfaces:
+{% for intobj in interface_array %}
+  - description: '{{ intobj['desc'] }}'
+    enabled: {{ intobj['open'] }}
+    name: {{ intobj['int'] }}
+    mtu: {{ intobj['mtu'] }}
+{% endfor %}
+  - description: 'router-id'
+    name: '{{ '{{ loopback_inf0 }}' }}'
+{% if role == 'leaf' %}
+  - description: 'vtep'
+    name: '{{ '{{ loopback_inf1 }}' }}'
+{% endif %}
+
+{% if role == 'leaf' -%}
+sonic_l2_interfaces:
+  {% for intobj in interface_array -%}
+  {% if 'channel' in intobj['int'] -%}
+  - name: {{ intobj['int'] }}
+    trunk:
+      allowed_vlans:
+        - vlan: {{ commonobj['L3VRFvlan'] }}
+        {% if intobj['int'] == 'Portchannel'+vltiportchannel|string -%}
+        - vlan: {{ commonobj['intmgtvlan'] }}
+  {% endif -%}
+{% endif -%}
+{% endfor -%}
+{% else %}
+  []
+{% endif -%}

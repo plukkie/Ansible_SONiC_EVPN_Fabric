@@ -1,0 +1,49 @@
+---
+
+- hosts: leaf
+  connection: httpapi
+  gather_facts: false
+  collections:
+    - dellemc.enterprise_sonic
+
+  vars:
+    jenkinsgit: https://github.com/plukkie/Jenkins_CICD_Pipeline_SONiC_Fabric.git
+    jenkinsdir: ./jenkinsgit
+    settingsfile: settings.json
+    hostvarsdir: host_vars_new
+
+
+  tasks: 
+  
+    - name: Fetch Git {{ jenkinsgit }}
+
+      git:
+        repo: "{{ jenkinsgit }}"
+        dest: "{{ jenkinsdir }}"
+
+    - name: Display JSON {{ settingsfile }}
+
+      shell: cat {{ jenkinsdir }}"/"{{ settingsfile }}
+      register: settingsobj
+
+
+    - name: Store JSON data to variable
+      set_fact:
+        jsonobj: "{{ settingsobj.stdout | from_json }}"
+
+    #- debug:
+    #    msg: "{{ jsonobj }}"
+
+    - name: Construct var yaml files
+      template:
+        src: templates/create_fabric_files.j2
+        dest: "{{ hostvarsdir }}/{{ inventory_hostname }}.yaml"
+
+    - name: Save config
+      vars:
+        ansible_connection: network_cli
+      sonic_config:
+        save: no
+
+
+

@@ -1,0 +1,58 @@
+lacp_pcs:
+  - 10
+  - 11
+  
+mclag_member_pcs:
+  - lag: Portchannel10
+  - lag: Portchannel11
+  
+sonic_bgp:
+  - bestpath:
+      as_path:
+        multipath_relax: true
+    bgp_as: '{{ bgp_asn }}'
+    router_id: '{{ bgp_router_id }}'
+  - bgp_as: '{{bgp_asn}}'
+    vrf_name: Vrf1
+  - bgp_as: '{{ bgp_asn }}'
+    timers:
+      holdtime: 9
+      keepalive_interval: 3
+
+sonic_bgp_af:
+  - address_family:
+      afis:
+        - afi: ipv4
+          max_path:
+            ebgp: 2
+          redistribute:
+            - protocol: connected
+          safi: unicast
+        - advertise_all_vni: true
+          afi: l2vpn
+          safi: evpn
+    bgp_as: '{{bgp_asn}}'
+  - address_family:
+      afis:
+        - advertise_prefix:
+            - afi: ipv4
+              safi: unicast
+          afi: l2vpn
+          safi: evpn
+        - afi: ipv4
+          redistribute:
+            - protocol: connected
+          safi: unicast
+    bgp_as: '{{ bgp_asn }}'
+    vrf_name: Vrf1
+
+sonic_bgp_neighbors:
+  - bgp_as: '{{bgp_asn}}'
+    neighbors:
+      - neighbor: Eth1/1
+        peer_group: spine-leaf
+      - neighbor: Eth1/5
+        peer_group: spine-leaf
+      peer_group:
+      - '{{sonic_bgp_spineleaf_peergroup}}'
+  is_border_leaf: false
