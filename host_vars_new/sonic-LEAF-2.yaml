@@ -54,18 +54,15 @@ sonic_bgp_af:
 
 sonic_bgp_neighbors:
   - bgp_as: '{{bgp_asn}}'
+    peer_group:
+      - '{{sonic_bgp_spineleaf_peergroup}}'
     neighbors:
       - neighbor: Eth1/1
         peer_group: spine-leaf
-      
       - neighbor: Eth1/5
         peer_group: spine-leaf
-      
-      peer_group:
-      - '{{sonic_bgp_spineleaf_peergroup}}'
-  
-  
-    - bgp_as: '{{bgp_asn}}'
+        
+  - bgp_as: '{{bgp_asn}}'
     neighbors:
       - neighbor: 2.0.1.4
         remote_as:
@@ -77,8 +74,10 @@ sonic_bgp_neighbors:
         remote_as:
           peer_as: borderas
     vrf_name: Vrf1
-  
 
+
+[{'int': 'Eth1/2', 'ipv4': 3}, {'int': 'Eth1/6', 'ipv4': 5}]
+ 
 sonic_bgp_neighbors_af:
   - bgp_as: '{{bgp_asn}}'
     neighbors:
@@ -162,4 +161,4 @@ sonic_l2_interfaces:
     trunk:
       allowed_vlans:
         - vlan: 60
-        
+        [{'int': 'Eth1/2', 'ipv4': 3}, {'int': 'Eth1/6', 'ipv4': 5}]

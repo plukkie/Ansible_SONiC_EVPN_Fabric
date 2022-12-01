@@ -14,9 +14,11 @@
 {% set hostcount = jsonobj['gns3']['nodesdata']['templates']['leaf']['hosts']['count']|int -%}
 {% set leafhostint = jsonobj['gns3']['nodesdata']['templates']['leaf']['hosts']['leaflinks'] -%}
 {% set leafborderint = jsonobj['gns3']['nodesdata']['templates']['leaf']['borderlinks'] -%}
-{% set interface_array = [] -%}
 {% set vltiportchannel = leafobj['vlti-Portchannel'] -%}
 
+{% set interface_array = [] -%}
+{% set l3_interface_array = [] -%}
+{% set border_int_array = [] -%}
 
 {% set slot = '1' %}
 
@@ -112,52 +114,58 @@ sonic_bgp_af:
     vrf_name: {{ commonobj['L3VRF'] }}
 
 sonic_bgp_neighbors:
+  {% set adapter = leafintobj['1st_adapter_number'] -%}
+  {% set adapterstep = leafintobj['adapterstep']|int -%}
+  {% set port = leafintobj['port'] -%}
+  {% set portstep = leafintobj['portstep'] -%}
+  {% set interface = {'a':adapter} -%}
   - bgp_as: '{{ '{{bgp_asn}}' }}'
-    neighbors:
-      {% set adapter = leafintobj['1st_adapter_number'] -%}
-      {% set adapterstep = leafintobj['adapterstep']|int -%}
-      {% set port = leafintobj['port'] -%}
-      {% set portstep = leafintobj['portstep'] -%}
-      {% set interface = {'a':adapter} -%}
-      {% for x in range(spinecount) -%}
-      - neighbor: Eth{{slot}}/{{interface['a']}}
-        peer_group: spine-leaf
-      {{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Interlink', 'open': true}) }}
-      {% set adapter = adapter+adapterstep -%}
-      {{ interface.update({'a':adapter}) -}}
-      {% endfor -%}
     peer_group:
       - '{{ '{{sonic_bgp_spineleaf_peergroup}}' }}'
-  {% if switchnr <= 2 -%}
-
-  {% set adapter = leafborderint['1st_adapter_number'] -%}
-  {% set adapterstep = leafborderint['adapterstep']|int -%}
-  {% set port = leafborderint['port'] -%}
-  {% set portstep = leafborderint['portstep'] -%}
-  {% set interface = {'a':adapter} -%}
-  {% for x in range(bordercount) -%}
-  {{ interface_array.append({'int':'Eth'+slot+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Borderlink', 'open': true}) }}
-  {% set adapter = adapter+adapterstep -%}
-  {{ interface.update({'a':adapter}) -}}
-  {% endfor -%}
-
-  {% if switchnr == 1 -%}
-  {% set myintip = {'ip':bordersubnet[3]} -%}
-  {% else %}
-  {% set myintip = {'ip':bordersubnet[3]|int+2*bordercount} -%}
-  {% endif -%}
-  {% for x in range(bordercount) -%}
+    neighbors:
+      {% for x in range(spinecount) -%}
+      {{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Interlink', 'open': true}) -}}
+      - neighbor: Eth{{slot}}/{{interface['a']}}
+        peer_group: spine-leaf
+      {% set adapter = adapter+adapterstep -%}
+      {{interface.update({'a':adapter})-}}
+      {% endfor %}
+  
+{% if switchnr <= 2 -%}
+{% set adapter = leafborderint['1st_adapter_number'] -%}
+{% set adapterstep = leafborderint['adapterstep']|int -%}
+{% set port = leafborderint['port'] -%}
+{% set portstep = leafborderint['portstep'] -%}
+{% set interface = {'a':adapter} -%}
+{% for x in range(bordercount) -%}
+{{ border_int_array.append( {'border':x, 'int':'Eth'+slot+'/'+interface['a']|string} ) -}}
+{{ interface_array.append({'int':'Eth'+slot+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Borderlink', 'open': true}) -}}
+{% set adapter = adapter+adapterstep -%}
+{{ interface.update({'a':adapter}) -}}
+{% endfor %}
+{% if switchnr == 1 -%}
+{% set myintip = {'ip':bordersubnet[3]} -%}
+{% else %}
+{% set myintip = {'ip':bordersubnet[3]|int+2*bordercount} -%}
+{% endif %}
+{% for x in range(bordercount) -%}
+{% for item in border_int_array -%}
+{% if x == item['border'] -%}
+{{ l3_interface_array.append( { 'int':item['int'], 'ipv4':myintip['ip']|int-1 } ) -}}
+{% endif -%}
+{% endfor %}
   - bgp_as: '{{ '{{bgp_asn}}' }}'
     neighbors:
       - neighbor: {{bordernet}}.{{myintip['ip']}}
         remote_as:
           peer_as: borderas
     vrf_name: {{ commonobj['L3VRF'] }}
-  {{ myintip.update({'ip':myintip['ip']|int+2}) -}}
-  {% endfor -%}
-  {% endif %}
+{{ myintip.update({'ip':myintip['ip']|int+2}) -}}
+{% endfor %}
+{% endif %}
 
 
+ 
 sonic_bgp_neighbors_af:
   - bgp_as: '{{ '{{bgp_asn}}' }}'
     neighbors:
@@ -233,3 +241,7 @@ sonic_l2_interfaces:
 {% else %}
   []
 {% endif -%}
+
+
+
+{{ l3_interface_array }}

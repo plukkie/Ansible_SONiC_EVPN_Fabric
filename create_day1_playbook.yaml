@@ -39,11 +39,11 @@
         src: templates/create_fabric_files.j2
         dest: "{{ hostvarsdir }}/{{ inventory_hostname }}.yaml"
 
-    - name: Save config
-      vars:
-        ansible_connection: network_cli
-      sonic_config:
-        save: no
+        #- name: Save config
+        #vars:
+        #ansible_connection: network_cli
+        #sonic_config:
+        #save: no
 
 
 
