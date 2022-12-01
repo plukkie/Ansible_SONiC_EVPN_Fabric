@@ -125,6 +125,7 @@ sonic_bgp_neighbors:
     neighbors:
       {% for x in range(spinecount) -%}
       {{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Interlink', 'open': true}) -}}
+      {{ l3_interface_array.append( { 'int':'Eth'+slot|string+'/'+interface['a']|string, 'ipv6':true } ) -}}
       - neighbor: Eth{{slot}}/{{interface['a']}}
         peer_group: spine-leaf
       {% set adapter = adapter+adapterstep -%}
@@ -151,7 +152,7 @@ sonic_bgp_neighbors:
 {% for x in range(bordercount) -%}
 {% for item in border_int_array -%}
 {% if x == item['border'] -%}
-{{ l3_interface_array.append( { 'int':item['int'], 'ipv4':bordernet+"."+(myintip['ip']|int+1)|string } ) -}}
+{{ l3_interface_array.append( { 'int':item['int'], 'ipv4':bordernet+"."+(myintip['ip']|int+1)|string+"/31" } ) -}}
 {% endif -%}
 {% endfor %}
   - bgp_as: '{{ '{{bgp_asn}}' }}'
@@ -239,7 +240,7 @@ sonic_l2_interfaces:
 {% endfor -%}
 {% else %}
   []
-{% endif -%}
+{% endif %}
 
 sonic_l3_interfaces:
 {% for x in l3_interface_array %}
@@ -247,7 +248,21 @@ sonic_l3_interfaces:
   - ipv4:
       addresses:
         - address: {{ x['ipv4'] }}
-    name: x['int']
+    name: {{ x['int'] }}
+{% elif 'ipv6' in x %}
+  - ipv6:
+      enabled: {{x['ipv6']}}
+    name: {{ x['int'] }}
 {% endif %}
 {% endfor %}
+  - ipv4:
+      addresses:
+        - address: '{{ '{{ loopback0_ip }}' }}'
+    name: '{{ '{{ loopback_inf0 }}' }}'
+{% if role == 'leaf' %}
+  - ipv4:
+      addresses:
+        - address: '{{ '{{ loopback1_ip }}' }}'
+    name: '{{ '{{ loopback_inf1 }}' }}'
+{% endif %}
 

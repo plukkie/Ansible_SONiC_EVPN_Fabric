@@ -159,13 +159,28 @@ sonic_l2_interfaces:
     trunk:
       allowed_vlans:
         - vlan: 60
-        sonic_l3_interfaces:
+        
+sonic_l3_interfaces:
+  - ipv6:
+      enabled: True
+    name: Eth1/1
+  - ipv6:
+      enabled: True
+    name: Eth1/5
   - ipv4:
       addresses:
-        - address: 2.0.1.5
-    name: x['int']
+        - address: 2.0.1.5/31
+    name: Eth1/2
   - ipv4:
       addresses:
-        - address: 2.0.1.7
-    name: x['int']
+        - address: 2.0.1.7/31
+    name: Eth1/6
+  - ipv4:
+      addresses:
+        - address: '{{ loopback0_ip }}'
+    name: '{{ loopback_inf0 }}'
+  - ipv4:
+      addresses:
+        - address: '{{ loopback1_ip }}'
+    name: '{{ loopback_inf1 }}'
 
