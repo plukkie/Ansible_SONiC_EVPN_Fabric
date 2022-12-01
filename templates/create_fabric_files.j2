@@ -151,7 +151,7 @@ sonic_bgp_neighbors:
 {% for x in range(bordercount) -%}
 {% for item in border_int_array -%}
 {% if x == item['border'] -%}
-{{ l3_interface_array.append( { 'int':item['int'], 'ipv4':myintip['ip']|int-1 } ) -}}
+{{ l3_interface_array.append( { 'int':item['int'], 'ipv4':bordernet+"."+(myintip['ip']|int+1)|string } ) -}}
 {% endif -%}
 {% endfor %}
   - bgp_as: '{{ '{{bgp_asn}}' }}'
@@ -163,7 +163,6 @@ sonic_bgp_neighbors:
 {{ myintip.update({'ip':myintip['ip']|int+2}) -}}
 {% endfor %}
 {% endif %}
-
 
  
 sonic_bgp_neighbors_af:
@@ -242,6 +241,13 @@ sonic_l2_interfaces:
   []
 {% endif -%}
 
+sonic_l3_interfaces:
+{% for x in l3_interface_array %}
+{% if 'ipv4' in x %}
+  - ipv4:
+      addresses:
+        - address: {{ x['ipv4'] }}
+    name: x['int']
+{% endif %}
+{% endfor %}
 
-
-{{ l3_interface_array }}
