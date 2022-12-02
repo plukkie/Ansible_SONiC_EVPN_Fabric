@@ -116,7 +116,7 @@ sonic_interfaces:
     enabled: True
     name: Eth1/7
     mtu: 9216
-  - description: 'Hostlink'
+  - description: 'Host0 link'
     enabled: True
     name: Eth1/4
     mtu: 9216
@@ -183,4 +183,19 @@ sonic_l3_interfaces:
       addresses:
         - address: '{{ loopback1_ip }}'
     name: '{{ loopback_inf1 }}'
+
+sonic_lag_interfaces:
+  - members:
+      interfaces:
+        - members: Eth1/3
+        - members: Eth1/7
+    name: Portchannel 100
+  - members:
+      interfaces:
+        - member: Eth1/4
+    name: Portchannel10
+
+
+[{'int': 'Eth1/3', 'mtu': 9216, 'desc': 'VLTi link', 'open': True}, {'int': 'Eth1/7', 'mtu': 9216, 'desc': 'VLTi link', 'open': True}, {'int': 'Eth1/4', 'mtu': 9216, 'desc': 'Host0 link', 'open': True}, {'int': 'Portchannel100', 'mtu': 9216, 'desc': 'VLTi Portchannel', 'open': True}, {'int': 'Portchannel10', 'mtu': 9216, 'desc': 'Lag to Host', 'open': True}, {'int': 'Eth1/1', 'mtu': 9216, 'desc': 'Interlink', 'open': True}, {'int': 'Eth1/5', 'mtu': 9216, 'desc': 'Interlink', 'open': True}, {'int': 'Eth1/2', 'mtu': 9216, 'desc': 'Borderlink', 'open': True}, {'int': 'Eth1/6', 'mtu': 9216, 'desc': 'Borderlink', 'open': True}]
+100
 

@@ -55,7 +55,7 @@
 {% set portstep = leafhostint['portstep'] -%}
 {% set interface = {'a':adapter} -%}
 {% for x in range(hostcount) -%}
-{{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Hostlink', 'open': true}) }}
+{{ interface_array.append({'int':'Eth'+slot|string+'/'+interface['a']|string, 'mtu': 9216, 'desc': 'Host'+x|string+' link', 'open': true}) }}
 {% set adapter = adapter+adapterstep -%}
 {{ interface.update({'a':adapter}) -}}
 {% endfor -%}
@@ -265,4 +265,30 @@ sonic_l3_interfaces:
         - address: '{{ '{{ loopback1_ip }}' }}'
     name: '{{ '{{ loopback_inf1 }}' }}'
 {% endif %}
+
+sonic_lag_interfaces:
+  {% if vlti['count'] > 0 -%}
+  - members:
+      interfaces:
+{% for x in interface_array %}
+{% if 'vlti link' in x['desc'].lower() %}
+        - members: {{ x['int'] }}
+{% endif %}
+{% endfor %}
+    name: Portchannel {{ vltiportchannel }}
+  {% endif -%}
+  {% for x in range(hostcount) -%}
+  - members:
+      interfaces:
+{% for intobj in interface_array %}
+{% if 'host'+x|string in intobj['desc'].lower() %}
+        - member: {{ intobj['int'] }}
+{% endif %}
+{% endfor %}
+    name: Portchannel{{pc_ints[0]+x}}
+{% endfor %}
+
+
+{{ interface_array }}
+{{ vltiportchannel }}
 
