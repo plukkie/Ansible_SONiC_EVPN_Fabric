@@ -296,8 +296,8 @@ sonic_system:
   interface_naming: standard
 
 sonic_vlans:
-  - vlan_id: 999
-  - vlan_id: 60
+  - vlan_id: {{ commonobj['L3VRFvlan'] }}
+  - vlan_id: {{ commonobj['intmgtvlan'] }}
 
 {{ interface_array }}
 {{ vltiportchannel }}
