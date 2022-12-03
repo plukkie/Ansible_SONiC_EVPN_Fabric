@@ -295,6 +295,10 @@ sonic_system:
   hostname: {{ inventory_hostname }}
   interface_naming: standard
 
+sonic_vlans:
+  - vlan_id: 999
+  - vlan_id: 60
+
 {{ interface_array }}
 {{ vltiportchannel }}
 
