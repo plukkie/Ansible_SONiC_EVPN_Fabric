@@ -288,6 +288,12 @@ sonic_lag_interfaces:
     name: Portchannel{{pc_ints[0]+x}}
 {% endfor %}
 
+sonic_system:
+  anycast_address:
+    ipv4: true
+    mac_address: '{{ '{{ anycast_mac_address }}' }}'
+  hostname: {{ inventory_hostname }}
+  interface_naming: standard
 
 {{ interface_array }}
 {{ vltiportchannel }}
