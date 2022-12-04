@@ -312,14 +312,22 @@ name: {{ commonobj['L3VRF'] }}
 
 {% if role == 'leaf %}
 sonic_vxlans:
-{% if myvars['vtep'] is defined and myvars.vtep %}
-  - name: {{ myvars['vtep'] }}
-    vlan_map:
-{% for vlanitem in vlanarray %}
-       - vlan: {{ vlanitem }}
-         vni: {{ vlanitem }}{{ vlanitem }}
-{% endfor %}
+- evpn_nvo: nvo1
+{% if switchnr is even %}
+  - name: vtep{{switchnr-1}}
+{% else %}
+  - name: vtep{{switchnr}}
 {% endif %}
+source_ip: '{{'{{ loopback1_ip.split(''/'')[0] }}'}}'
+    vlan_map:
+      - vlan: {{ commonobj['intmgtvlan'] }}
+        vni: {{ commonobj['intmgtvlan'] }}{{ commonobj['intmgtvlan'] }}
+      - vlan: {{ commonobj['L3VRF'] }}
+        vni: {{ commonobj['L3VRF'] }}{{ commonobj['L3VRF'] }}
+     vrf_map:
+      - vni: 600
+        vrf: Vrf1
+
 {% endif %}
 
 sonic_vxlans:
@@ -327,10 +335,10 @@ sonic_vxlans:
     name: vtep1
     source_ip: '{{ loopback1_ip.split(''/'')[0] }}'
     vlan_map:
-      - vlan: 999
-        vni: 9990
-      - vlan: 60
-        vni: 600
+      - vlan: {{ commonobj['intmgtvlan'] }}
+        vni: {{ commonobj['intmgtvlan'] }}{{ commonobj['intmgtvlan'] }}
+      - vlan: {{ commonobj['L3VRF'] }}
+        vni: {{ commonobj['L3VRF'] }}{{ commonobj['L3VRF'] }}
     vrf_map:
       - vni: 600
         vrf: Vrf1
