@@ -310,6 +310,17 @@ sonic_vrf_interfaces:
 {% endfor %}
 name: {{ commonobj['L3VRF'] }}
 
+{% if role == 'leaf %}
+sonic_vxlans:
+{% if myvars['vtep'] is defined and myvars.vtep %}
+  - name: {{ myvars['vtep'] }}
+    vlan_map:
+{% for vlanitem in vlanarray %}
+       - vlan: {{ vlanitem }}
+         vni: {{ vlanitem }}{{ vlanitem }}
+{% endfor %}
+{% endif %}
+{% endif %}
 
 sonic_vxlans:
   - evpn_nvo: nvo1
