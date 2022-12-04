@@ -299,6 +299,16 @@ sonic_vlans:
   - vlan_id: {{ commonobj['L3VRFvlan'] }}
   - vlan_id: {{ commonobj['intmgtvlan'] }}
 
+
+sonic_vrf_interfaces:
+  - members:
+      interfaces:
+        - name: {{ commonobj['L3VRFvlan'] }}
+        - name: {{ commonobj['intmgtvlan'] }}
+        - name: Eth1/2
+        - name: Eth1/6
+    name: Vrf1
+
 {{ interface_array }}
 {{ vltiportchannel }}
 
