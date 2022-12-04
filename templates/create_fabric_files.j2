@@ -303,11 +303,12 @@ sonic_vlans:
 sonic_vrf_interfaces:
   - members:
       interfaces:
-        - name: {{ commonobj['L3VRFvlan'] }}
-        - name: {{ commonobj['intmgtvlan'] }}
-        - name: Eth1/2
-        - name: Eth1/6
-    name: Vrf1
+        - name: Vlan{{ commonobj['L3VRFvlan'] }}
+        - name: Vlan{{ commonobj['intmgtvlan'] }}
+{% for int in border_int_array %}
+- name: int['int']
+{% endfor %}
+name: {{ commonobj['L3VRF'] }}
 
 {{ interface_array }}
 {{ vltiportchannel }}
