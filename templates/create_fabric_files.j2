@@ -322,26 +322,12 @@ source_ip: '{{'{{ loopback1_ip.split(''/'')[0] }}'}}'
     vlan_map:
       - vlan: {{ commonobj['intmgtvlan'] }}
         vni: {{ commonobj['intmgtvlan'] }}{{ commonobj['intmgtvlan'] }}
-      - vlan: {{ commonobj['L3VRF'] }}
-        vni: {{ commonobj['L3VRF'] }}{{ commonobj['L3VRF'] }}
+      - vlan: {{ commonobj['L3VRFvlan'] }}
+        vni: {{ commonobj['L3VRFvlan'] }}{{ commonobj['L3VRFvlan'] }}
      vrf_map:
-      - vni: 600
-        vrf: Vrf1
-
+      - vni: {{ commonobj['L3VRFvlan'] }}{{ commonobj['L3VRFvlan'] }}
+        vrf: {{ commonobj['L3VRF'] }}{{ commonobj['L3VRF'] }}
 {% endif %}
-
-sonic_vxlans:
-  - evpn_nvo: nvo1
-    name: vtep1
-    source_ip: '{{ loopback1_ip.split(''/'')[0] }}'
-    vlan_map:
-      - vlan: {{ commonobj['intmgtvlan'] }}
-        vni: {{ commonobj['intmgtvlan'] }}{{ commonobj['intmgtvlan'] }}
-      - vlan: {{ commonobj['L3VRF'] }}
-        vni: {{ commonobj['L3VRF'] }}{{ commonobj['L3VRF'] }}
-    vrf_map:
-      - vni: 600
-        vrf: Vrf1
 
 {{ interface_array }}
 {{ vltiportchannel }}
