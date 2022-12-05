@@ -3,8 +3,6 @@
 
 
 
-
-
 lacp_pcs:
   - 10
   
@@ -52,6 +50,7 @@ sonic_bgp_af:
     bgp_as: '{{ bgp_asn }}'
     vrf_name: Vrf1
 
+
 sonic_bgp_neighbors:
   - bgp_as: '{{bgp_asn}}'
     peer_group:
@@ -61,20 +60,18 @@ sonic_bgp_neighbors:
         peer_group: spine-leaf
       - neighbor: Eth1/5
         peer_group: spine-leaf
-        
   - bgp_as: '{{bgp_asn}}'
     neighbors:
       - neighbor: 2.0.1.4
         remote_as:
-          peer_as: borderas
+          peer_as: 65000
     vrf_name: Vrf1
   - bgp_as: '{{bgp_asn}}'
     neighbors:
       - neighbor: 2.0.1.6
         remote_as:
-          peer_as: borderas
+          peer_as: 65000
     vrf_name: Vrf1
-
  
 sonic_bgp_neighbors_af:
   - bgp_as: '{{bgp_asn}}'
@@ -83,7 +80,7 @@ sonic_bgp_neighbors_af:
         neighbor: Eth1/1
       - address_family: '{{sonic_bgp_fabriclink_neighbors_aflist}}'
         neighbor: Eth1/5
-        - bgp_as: '{{bgp_asn}}'
+  - bgp_as: '{{bgp_asn}}'
     neighbors:
       - address_family:
           - activate: true
@@ -99,8 +96,6 @@ sonic_bgp_neighbors_af:
             safi: unicast
         neighbor: 2.0.1.6
     vrf_name: Vrf1
-  
-
 
 is_border_leaf: true
 
@@ -155,11 +150,11 @@ sonic_l2_interfaces:
       allowed_vlans:
         - vlan: 60
         - vlan: 999
-  - name: Portchannel10
+          - name: Portchannel10
     trunk:
       allowed_vlans:
         - vlan: 60
-        
+          
 sonic_l3_interfaces:
   - ipv6:
       enabled: True
@@ -195,7 +190,43 @@ sonic_lag_interfaces:
         - member: Eth1/4
     name: Portchannel10
 
+sonic_system:
+  anycast_address:
+    ipv4: true
+    mac_address: '{{ anycast_mac_address }}'
+  hostname: sonic-LEAF-2
+  interface_naming: standard
 
-[{'int': 'Eth1/3', 'mtu': 9216, 'desc': 'VLTi link', 'open': True}, {'int': 'Eth1/7', 'mtu': 9216, 'desc': 'VLTi link', 'open': True}, {'int': 'Eth1/4', 'mtu': 9216, 'desc': 'Host0 link', 'open': True}, {'int': 'Portchannel100', 'mtu': 9216, 'desc': 'VLTi Portchannel', 'open': True}, {'int': 'Portchannel10', 'mtu': 9216, 'desc': 'Lag to Host', 'open': True}, {'int': 'Eth1/1', 'mtu': 9216, 'desc': 'Interlink', 'open': True}, {'int': 'Eth1/5', 'mtu': 9216, 'desc': 'Interlink', 'open': True}, {'int': 'Eth1/2', 'mtu': 9216, 'desc': 'Borderlink', 'open': True}, {'int': 'Eth1/6', 'mtu': 9216, 'desc': 'Borderlink', 'open': True}]
-100
+sonic_vlans:
+  - vlan_id: 60
+  - vlan_id: 999
+
+sonic_vrf_interfaces:
+  - members:
+      interfaces:
+        - name: Vlan60
+        - name: Vlan999
+        - name: Eth1/2
+        - name: Eth1/6
+    name: Vrf1
+
+sonic_vxlans:
+  - evpn_nvo: nvo1
+    name: vtep1
+    source_ip: '{{ loopback1_ip.split(/)[0] }}'
+    vlan_map:
+      - vlan: 999
+        vni: 999999
+      - vlan: 60
+        vni: 6060
+     vrf_map:
+      - vni: 6060
+        vrf: Vrf1
+
+vlans:
+  - 999
+
+vrfs:
+  - Vrf1
+
 

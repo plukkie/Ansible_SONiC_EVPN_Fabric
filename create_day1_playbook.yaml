@@ -1,6 +1,6 @@
 ---
 
-- hosts: leaf
+- hosts: all
   connection: httpapi
   gather_facts: false
   collections:
@@ -10,7 +10,8 @@
     jenkinsgit: https://github.com/plukkie/Jenkins_CICD_Pipeline_SONiC_Fabric.git
     jenkinsdir: ./jenkinsgit
     settingsfile: settings.json
-    hostvarsdir: host_vars_new
+    host_vars_dir: host_vars_new
+    group_vars_dir: group_vars_new
 
 
   tasks: 
@@ -34,10 +35,42 @@
     #- debug:
     #    msg: "{{ jsonobj }}"
 
-    - name: Construct var yaml files
+    - name: Construct {{ host_vars_dir }} yaml files
       template:
-        src: templates/create_fabric_files.j2
-        dest: "{{ hostvarsdir }}/{{ inventory_hostname }}.yaml"
+        src: templates/create_fabric_hostvar_files.j2
+        dest: "{{ host_vars_dir }}/{{ inventory_hostname }}.yaml"
+
+    - name: Construct {{ group_vars_dir }}/leaf.yaml
+      template:
+        src: templates/create_fabric_leaf.j2
+        dest: "{{ group_vars_dir }}/leaf.yaml"
+
+    - name: Construct {{ group_vars_dir }}/spine.yaml
+      template:
+        src: templates/create_fabric_spine.j2
+        dest: "{{ group_vars_dir }}/spine.yaml"
+
+    - name: Construct {{ group_vars_dir }}/ temp files
+      template:
+        src: templates/create_fabric_all.j2
+        dest: "{{ group_vars_dir }}/{{inventory_hostname}}.yaml.tmp"
+
+    - name: Delete  {{ group_vars_dir }}/all.yaml
+      file:
+         path: "{{ group_vars_dir }}/all.yaml"
+         state: absent
+
+    - name: Merge all temp files into {{ group_vars_dir }}/all.yaml
+      shell: cat {{group_vars_dir}}/{{inventory_hostname}}.yaml.tmp >> {{ group_vars_dir }}/all.yaml
+      #loop: "{{ lookup('fileglob', '{{group_vars_dir}}/{{inventory_hostname}}.yaml.tmp', wantlist=True) }}"
+
+    - name: Delete temp files in  {{ group_vars_dir }}/
+      file:
+         path: '{{group_vars_dir}}/{{inventory_hostname}}.yaml.tmp'
+         state: absent
+
+
+
 
         #- name: Save config
         #vars:
