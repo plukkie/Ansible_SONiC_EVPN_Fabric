@@ -59,7 +59,7 @@
 {{ interface.update({'a':adapter}) -}}
 {% endfor -%}
 
-{{ interface_array.append({'int':'Portchannel'+vltiportchannel|string, 'mtu': 9216, 'desc': 'VLTi Portchannel', 'open': true}) }}
+{{ interface_array.append({'int':'PortChannel'+vltiportchannel|string, 'mtu': 9216, 'desc': 'VLTi Portchannel', 'open': true}) }}
 {% endif %}
 
 {% if role == 'leaf' %}
@@ -74,8 +74,8 @@ lacp_pcs: []
 {% if role == 'leaf' %}
 mclag_member_pcs:
   {% for x in range(hostcount) -%}
-  - lag: Portchannel{{pc_ints[0]+x}}
-  {{ interface_array.append({'int':'Portchannel'+(pc_ints[0]+x)|string, 'mtu': 9216, 'desc': 'Lag to Host', 'open': true}) }}
+  - lag: PortChannel{{pc_ints[0]+x}}
+  {{ interface_array.append({'int':'PortChannel'+(pc_ints[0]+x)|string, 'mtu': 9216, 'desc': 'Lag to Host', 'open': true}) }}
   {% endfor %}
 {% elif role == 'spine' -%}
 mclag_member_pcs: []
@@ -101,6 +101,7 @@ sonic_bgp:
       keepalive_interval: 3
 {% endif %}
 
+{% if role == 'leaf' %}
 sonic_bgp_af:
   - address_family:
       afis:
@@ -127,7 +128,7 @@ sonic_bgp_af:
           safi: unicast
     bgp_as: '{{ '{{ bgp_asn }}' }}'
     vrf_name: {{ commonobj['L3VRF'] }}
-
+{% endif %}
 
 sonic_bgp_neighbors:
 {% if role == 'leaf' %}
@@ -262,17 +263,17 @@ sonic_interfaces:
 
 {% if role == 'leaf' %}
 sonic_l2_interfaces:
-  {% for intobj in interface_array -%}
-  {% if 'channel' in intobj['int'] -%}
+{% for intobj in interface_array %}
+{% if 'channel' in intobj['int'] %}
   - name: {{ intobj['int'] }}
     trunk:
       allowed_vlans:
         - vlan: {{ commonobj['L3VRFvlan'] }}
-        {% if intobj['int'] == 'Portchannel'+vltiportchannel|string -%}
+{% if intobj['int'] == 'PortChannel'+vltiportchannel|string %}
         - vlan: {{ commonobj['intmgtvlan'] }}
-        {% endif %}
-  {% endif -%}
-{% endfor -%}
+{% endif %}
+{% endif %}
+{% endfor %}
 {% elif role == 'spine' %}
 sonic_l2_interfaces: []
 {% endif %}
@@ -308,10 +309,10 @@ sonic_lag_interfaces:
       interfaces:
 {% for x in interface_array %}
 {% if 'vlti link' in x['desc'].lower() %}
-        - members: {{ x['int'] }}
+        - member: {{ x['int'] }}
 {% endif %}
 {% endfor %}
-    name: Portchannel {{ vltiportchannel }}
+    name: PortChannel {{ vltiportchannel }}
   {% endif -%}
   {% for x in range(hostcount) -%}
   - members:
@@ -321,16 +322,18 @@ sonic_lag_interfaces:
         - member: {{ intobj['int'] }}
 {% endif %}
 {% endfor %}
-    name: Portchannel{{pc_ints[0]+x}}
+    name: PortChannel{{pc_ints[0]+x}}
 {% endfor %}
 {% elif role == 'spine' %}
 sonic_lag_interfaces: []
 {% endif %}
 
 sonic_system:
+{% if role == 'leaf' %}
   anycast_address:
     ipv4: true
     mac_address: '{{ '{{ anycast_mac_address }}' }}'
+{% endif %}
   hostname: {{ inventory_hostname }}
   interface_naming: standard
 
@@ -364,21 +367,21 @@ sonic_vxlans:
 {% else %}
     name: vtep{{switchnr}}
 {% endif %}
-    source_ip: '{{'{{ loopback1_ip.split(''/'')[0] }}'}}'
+    source_ip: '{{'{{ loopback1_ip.split("''/''")[0] }}'}}'
     vlan_map:
       - vlan: {{ commonobj['intmgtvlan'] }}
         vni: {{ commonobj['intmgtvlan'] }}{{ commonobj['intmgtvlan'] }}
       - vlan: {{ commonobj['L3VRFvlan'] }}
         vni: {{ commonobj['L3VRFvlan'] }}{{ commonobj['L3VRFvlan'] }}
-     vrf_map:
+    vrf_map:
       - vni: {{ commonobj['L3VRFvlan'] }}{{ commonobj['L3VRFvlan'] }}
         vrf: {{ commonobj['L3VRF'] }}
 {% endif %}
 
+{% if role == 'leaf' %}
 vlans:
   - {{ commonobj['intmgtvlan'] }}
 
 vrfs:
   - {{ commonobj['L3VRF'] }}
-
-
+{% endif %}

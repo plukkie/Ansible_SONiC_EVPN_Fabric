@@ -15,5 +15,6 @@ sonic_mclag:
     portchannels: '{{ mclag_member_pcs }}'
   peer_address: '{{ mclag_peer_ip }}'
   peer_link: '{{ mclag_pc_1 }}'
-  source_address: '{{ loopback0_ip.split(''/'')[0] }}'
+  source_address: '{{ loopback0_ip.split("/")[0] }}'
 vtep_name: '{{ host_data[inventory_hostname].vtep_name }}'
+
