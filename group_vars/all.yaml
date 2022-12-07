@@ -11,8 +11,6 @@ dns_servers:
 loopback0_ip: '{{ host_data[inventory_hostname].loopback0_ip }}'
 loopback_inf0: Loopback0
 loopback_inf1: Loopback1
-#mgmt_gateway_ip: '{{ host_data[inventory_hostname].mgmt_gateway_ip }}'
-#mgmt_ip: '{{ host_data[inventory_hostname].mgmt_ip }}'
 ntp_servers:
   - 10.204.9.254
 sonic_bgp_fabriclink_neighbors_aflist:
