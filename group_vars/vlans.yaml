@@ -61,4 +61,12 @@ vlandata:
     vrf: Vrf1
     int_vlan_options: [ neigh-suppress ]
   
-
+  1501:
+    desc: "pair34-vlan534"
+    net: 10.10.150.0
+    agw: 254
+    mask: 24
+    interfaces: [ Portchannel 10, Portchannel 100 ] 
+    hosts: [ sonic-LEAF-3, sonic-LEAF-4 ]
+    vrf: Vrf1
+    int_vlan_options: [ neigh-suppress ]
