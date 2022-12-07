@@ -1,0 +1,18 @@
+{% set conf = jsonobj -%}
+{% set defaultarray = "10.20.30.1".split(".") %}
+
+{% if conf['fabric']['common']['oobmgtstart'] is defined and conf['fabric']['common']['oobmgtstart'] %}
+{% set oobarray = conf['fabric']['common']['oobmgtstart'].split(".") %}
+{% set net = oobarray[0]+'.'+oobarray[1]+'.'+oobarray[2] %}
+{% set mgthostip = oobarray[3] %}
+{% else %}
+{% set net = defaultarray[0]+'.'+defaultarray[1]+'.'+defaultarray[2] %}
+{% set mgthostip = defaultarray[3] %}
+{% endif -%}
+
+{% set leafs = conf['gns3']['nodesdata']['templates']['leaf']['count'] %}
+{% set spines = conf['gns3']['nodesdata']['templates']['spine']['count'] %}
+{% set leafprefix = conf['fabric']['leaf']['nameprefix'] %}
+{% set spineprefix = conf['fabric']['spine']['nameprefix'] %}
+
+

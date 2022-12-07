@@ -47,16 +47,16 @@
 
     - name: Copy {{ inventoryfile }} to {{ inventoryfile }}{{ backupextension }}
       ansible.builtin.copy:
-        src: {{ inventoryfile }}
-        dest: {{ inventoryfile }}{{ backupextension }}
+        src: '{{ inventoryfile }}'
+        dest: '{{ inventoryfile }}{{ backupextension }}'
         force: true
 
 
-    - name: Construct host yaml files in '{{ host_vars_dir }}/*'
+    - name: Create inventory file {{ inventoryfile }}
       delegate_to: localhost
       template:
-        src: templates/create_fabric_hostvar_files.j2
-        dest: "{{ host_vars_dir }}/{{ inventory_hostname }}.yaml"
+        src: templates/create_inventory_file.j2
+        dest: "{{ inventoryfile }}"
 
     - name: Construct {{ group_vars_dir }}/leaf.yaml
       delegate_to: localhost
