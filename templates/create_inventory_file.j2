@@ -1,6 +1,7 @@
 {% set conf = jsonobj -%}
 {% set defaultarray = "10.20.30.1".split(".") %}
 
+
 {% if conf['fabric']['common']['oobmgtstart'] is defined and conf['fabric']['common']['oobmgtstart'] %}
 {% set oobarray = conf['fabric']['common']['oobmgtstart'].split(".") %}
 {% set net = oobarray[0]+'.'+oobarray[1]+'.'+oobarray[2] %}
@@ -15,4 +16,20 @@
 {% set leafprefix = conf['fabric']['leaf']['nameprefix'] %}
 {% set spineprefix = conf['fabric']['spine']['nameprefix'] %}
 
+{% for counter in range(2) %}
 
+{% if counter == 0 %}
+{% set cnt = spines %}
+{% set np = spineprefix %}
+{% elif counter == 1 %}
+{% set cnt = leafs %}
+{% set np = leafprefix %}
+{% endif %}
+
+{% for i in range(cnt) %}
+{% set switchnr = i+1 %}
+{% set switchname = np+i %}
+{{ switchname }}
+{% endfor %}
+
+{% endfor %}
