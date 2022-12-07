@@ -16,10 +16,6 @@ interface {{intf.name}}
 {%endif%}
 #######################################}
 
-{% if mgmt_ip is defined %}
-interface Management 0
-  ip address {{mgmt_ip}} gwaddr {{mgmt_gateway_ip}}
-{%endif%}
 
 {# ntp server start #}
 {%if ntp_servers is defined and ntp_servers%}
