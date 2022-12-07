@@ -16,7 +16,7 @@ interface {{intf.name}}
 {%endif%}
 #######################################}
 
-{%if mgmt_ip is defined and mgmt_ip and mgmt_gateway_ip%}
+{% if mgmt_ip is defined %}
 interface Management 0
   ip address {{mgmt_ip}} gwaddr {{mgmt_gateway_ip}}
 {%endif%}
