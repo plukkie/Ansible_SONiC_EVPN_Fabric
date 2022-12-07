@@ -264,7 +264,7 @@ sonic_interfaces:
 {% if role == 'leaf' %}
 sonic_l2_interfaces:
 {% for intobj in interface_array %}
-{% if 'channel' in intobj['int'] %}
+{% if 'hannel' in intobj['int'] %}
   - name: {{ intobj['int'] }}
     trunk:
       allowed_vlans:

@@ -144,6 +144,15 @@ sonic_interfaces:
     name: '{{ loopback_inf1 }}'
 
 sonic_l2_interfaces:
+  - name: PortChannel100
+    trunk:
+      allowed_vlans:
+        - vlan: 60
+        - vlan: 999
+  - name: PortChannel10
+    trunk:
+      allowed_vlans:
+        - vlan: 60
 
 sonic_l3_interfaces:
   - ipv6:
