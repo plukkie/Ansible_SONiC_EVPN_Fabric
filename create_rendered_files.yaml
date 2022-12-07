@@ -10,8 +10,10 @@
     - include_vars:
         file: group_vars/vlans.yaml
         name: myvars
+      delegate_to: localhost
 
     - name: Construct tenant data in yaml files
+      delegate_to: localhost
       template:
         src: templates/create_vlan_vars.j2
         dest: rendered/{{ inventory_hostname }}-vlanvars.yaml
