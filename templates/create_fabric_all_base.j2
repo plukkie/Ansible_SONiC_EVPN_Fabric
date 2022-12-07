@@ -14,7 +14,8 @@ bgp_asn: '{{ '{{ host_data[inventory_hostname].bgp_asn }}' }}'
 bgp_router_id: '{{ '{{ host_data[inventory_hostname].bgp_router_id }}' }}'
 dns_servers:
   - 10.204.0.251
-
+mgmt_gateway_ip: '{{ '{{ host_data[inventory_hostname].mgmt_gateway_ip }}' }}'
+mgmt_ip: '{{ '{{ host_data[inventory_hostname].mgmt_ip }}' }}'
 loopback0_ip: '{{ '{{ host_data[inventory_hostname].loopback0_ip }}' }}'
 loopback_inf0: Loopback0
 loopback_inf1: Loopback1
