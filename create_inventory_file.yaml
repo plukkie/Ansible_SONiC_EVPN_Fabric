@@ -16,8 +16,13 @@
     backupextension: .bak
 
 
-  tasks: 
-  
+  tasks:
+
+    - name: Check if inventoryfile '['{{ inventoryfile }}']' exists
+      stat:
+        path: "{{ inventoryfile }}"
+      register: fileresult
+
     - name: Fetch Git {{ jenkinsgit }}
       delegate_to: localhost
       run_once: true
@@ -45,16 +50,17 @@
     #- debug:
     #    msg: "{{ jsonobj }}"
 
-    - name: Copy {{ inventoryfile }} to {{ inventoryfile }}{{ backupextension }}
-      ansible.builtin.copy:
-        src: '{{ inventoryfile }}'
-        dest: '{{ inventoryfile }}{{ backupextension }}'
-        force: true
-
+        #- name: Copy {{ inventoryfile }} to {{ inventoryfile }}{{ backupextension }}
+        #ansible.builtin.copy:
+        #src: '{{ inventoryfile }}'
+        #dest: '{{ inventoryfile }}{{ backupextension }}'
+        #force: true
+        #when: not fileresult.stat.exists
 
     - name: Create inventory file {{ inventoryfile }}
       delegate_to: localhost
       template:
         src: templates/create_inventory_file.j2
         dest: "{{ inventoryfile }}"
+      when: not fileresult.stat.exists
 
