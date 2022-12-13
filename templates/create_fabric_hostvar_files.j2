@@ -21,7 +21,7 @@
 {% set interface_array = [] -%}
 {% set l3_interface_array = [] -%}
 {% set border_int_array = [] -%}
-{% set slot = '1' -%}
+{% set slot = commonobj['slot_syntax'] -%}
 
 {% if leafprefix in inventory_hostname -%}
 {% set switchnr = inventory_hostname[leafprefix|length:]|int -%}
