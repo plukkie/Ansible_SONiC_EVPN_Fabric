@@ -1,0 +1,77 @@
+# dhcpd.conf
+#
+# Sample configuration file for ISC dhcpd
+#
+# Attention: If /etc/ltsp/dhcpd.conf exists, that will be used as
+# configuration file instead of this file.
+#
+default-lease-time 600;
+max-lease-time 1800;
+ddns-update-style none;
+authoritative;
+option domain-name-servers 10.8.8.8, 10.7.7.7;
+
+## option to specifiy Dell vendor specific ztd staging code
+option ztd-provision-url code 240 = text; #OS10
+option ztp_json_url code 67 = text; #SONiC
+
+#This is the subnet where the management interfaces connect to
+subnet 10.204.11.0 netmask 255.255.255.0 {
+    range 10.204.11.239 10.204.11.250;
+        option routers 10.204.11.1;
+}
+
+## SONiC ZTP/EVPN CI/CD Fabric Dev in GNS3
+group {
+	option ztp_json_url "http://10.204.11.135/tftpboot/sonic/ztp/ztp_gns3_dev_fabric.json";
+
+        host SONiC-SPINE-1 {
+                hardware ethernet cc:bb:aa:21:00:01;
+                fixed-address 10.204.11.155;
+        }
+        host SONiC-SPINE-2 {
+                hardware ethernet cc:bb:aa:22:00:01;
+                fixed-address 10.204.11.156;
+        }
+        host SONiC-LEAF-1 {
+                hardware ethernet cc:bb:aa:11:00:01;
+                fixed-address 10.204.11.157;
+        }
+        host SONiC-LEAF-2 {
+                hardware ethernet cc:bb:aa:12:00:01;
+                fixed-address 10.204.11.158;
+        }
+        host SONiC-LEAF-3 {
+                hardware ethernet cc:bb:aa:13:00:01;
+                fixed-address 10.204.11.159;
+        }
+        host SONiC-LEAF-4 {
+                hardware ethernet cc:bb:aa:14:00:01;
+                fixed-address 10.204.11.160;
+        }
+        host SONiC-BORDER1 {
+		option ztp_json_url "http://10.204.11.135/tftpboot/sonic/ztp/ztp_gns3_dev_fabric_endpoints.json";
+                hardware ethernet cc:bb:aa:31:00:01;
+                fixed-address 10.204.11.150;
+		option host-name "SONiC-BORDER1";
+        }
+        host SONiC-BORDER2 {
+		option ztp_json_url "http://10.204.11.135/tftpboot/sonic/ztp/ztp_gns3_dev_fabric_endpoints.json";
+                hardware ethernet cc:bb:aa:32:00:01;
+                fixed-address 10.204.11.154;
+		option host-name "SONiC-BORDER2";
+        }
+        host SONiC-HOST1 {
+		option ztp_json_url "http://10.204.11.135/tftpboot/sonic/ztp/ztp_gns3_dev_fabric_endpoints.json";
+                hardware ethernet cc:bb:aa:41:00:01;
+                fixed-address 10.204.11.177;
+		option host-name "SONiC-HOST1";
+        }
+        host SONiC-HOST2 {
+		option ztp_json_url "http://10.204.11.135/tftpboot/sonic/ztp/ztp_gns3_dev_fabric_endpoints.json";
+                hardware ethernet cc:bb:aa:42:00:01;
+                fixed-address 10.204.11.178;
+		option host-name "SONiC-HOST2";
+        }
+}
+
